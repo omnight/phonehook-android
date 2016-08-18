@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>db_script/001.sql</file>
-    </qresource>
-</RCC>
