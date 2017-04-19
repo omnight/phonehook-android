@@ -3,7 +3,6 @@
 
 #include <QThread>
 #include <QtSql/QSqlDatabase>
-#include <QtSql/QSql>
 #include <QtSql/QSqlQuery>
 #include <QDebug>
 #include "phonenumber.h"
