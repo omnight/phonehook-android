@@ -8,6 +8,8 @@ import QtQuick.Controls.Material 2.0
 
 RowLayout {
     width: parent.width
+    signal valueChanged(string value)
+
     Label {
         font.pixelSize: 10*ps
         text: model.title

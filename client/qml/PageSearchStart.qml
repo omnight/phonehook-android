@@ -16,6 +16,15 @@ PageBase {
     contentColumn.spacing: 10*ps
 
 
+    fixChildren: Label {
+        text: qsTr("No sources with search capability activated")
+        font.pixelSize: 12*ps
+        visible: botView.model && botView.model.count == 0
+        wrapMode: "Wrap"
+        anchors.centerIn: parent
+        anchors.margins: 40*ps
+    }
+
     Column {
         width: pageWidth
         visible: botView.model && botView.model.count != 0

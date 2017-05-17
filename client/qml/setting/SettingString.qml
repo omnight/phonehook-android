@@ -10,6 +10,7 @@ import QtQuick.Controls.Material 2.0
 Column {
     width: parent.width
     spacing: 5*ps
+    signal valueChanged(string value)
 
     Label {
         font.pixelSize: 10*ps
@@ -17,8 +18,7 @@ Column {
     }
 
     TextField {
-        id: textField1
-        signal valueChanged(string value)
+        id: textField1        
 
         text: model.value
         width: parent.width

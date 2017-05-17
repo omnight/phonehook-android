@@ -7,6 +7,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Material 2.0
 
 import "control"
+import "setting"
 
 PageBase {
     property int botId: 0
@@ -21,7 +22,7 @@ PageBase {
     Label {
         font.pixelSize: 12 * ps
         text: qsTr("None")
-        visible: params.model.count == 0 // && !_bots.hasBlockTag(botId)
+        visible: params.model.count == 0 && !_bots.hasBlockTag(botId)
     }
 
     ListView {
@@ -52,6 +53,25 @@ PageBase {
 
     }
 
+    RowLayout {
+        visible: _bots.hasBlockTag(botId)
+        width: parent.width
+
+        Label {
+            id: lbl
+            font.pixelSize: 10*ps
+            text: qsTr('Enable Auto-blocking')
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+        }
+        Switch {
+            checked: _bots.isBlockSource(botId)
+            onCheckedChanged: {
+                _bots.setBlockSource(botId, checked)
+                _blocks.initBlocks()
+            }
+        }
+    }
 
     Item {
         width: parent.width

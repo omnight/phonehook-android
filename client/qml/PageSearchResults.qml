@@ -61,6 +61,7 @@ PageBase {
         height: contentHeight
         width: pageWidth
         model: _bots.searchResult
+        interactive: false
 
         delegate: SearchResultListItem {
             width: pageWidth

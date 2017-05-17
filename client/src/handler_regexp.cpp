@@ -53,6 +53,10 @@ QList<process_data*> handler_regexp::processRegex(const QDomElement &robotXml, Q
 
         /// actually execute the regex
 
+//        for(int i=0; i < inputString.length(); i += 600) {
+//            qDebug() << inputString.mid(i, 600);
+//        }
+
         QRegularExpressionMatchIterator i = regex.globalMatch(inputString);
 
         /// if replace -- create empty result (on first replace)

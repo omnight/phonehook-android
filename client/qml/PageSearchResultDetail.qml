@@ -67,9 +67,11 @@ PageBase {
     Item {
         width: pageWidth
         height: 10*ps
+        visible: resultData.address.length > 0
     }
 
     Header {
+        visible: resultData.address.length > 0
         text: qsTr("Address")
     }
 

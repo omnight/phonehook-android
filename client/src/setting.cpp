@@ -34,3 +34,9 @@ void setting::put(QString key, QString value) {
     sq.addBindValue(value);
     sq.exec();
 }
+
+void setting::remove(QString key) {
+    SQL("\
+        DELETE FROM setting WHERE key = :key\
+    ", key);
+}

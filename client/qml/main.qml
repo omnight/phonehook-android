@@ -125,7 +125,7 @@ ApplicationWindow {
                    icon: '../images/home-5-48.png'
                    onTriggered: {
                        drawer.hide()
-                       pageStack.pop(pageStack.initialItem);
+                       pageStack.pop(pageStack.get(0), StackView.Transition);
                    }
                }
 
@@ -135,7 +135,8 @@ ApplicationWindow {
                    icon: '../images/search-2-48.png'
                    onTriggered: {
                        drawer.hide()
-                       pageStack.pop(pageStack.initialItem, true);
+
+                       pageStack.pop(pageStack.get(0), StackView.Immediate);
                        pageStack.push(Qt.resolvedUrl('PageSearchStart.qml'))
                    }
                }
@@ -146,7 +147,7 @@ ApplicationWindow {
                    icon: '../images/restriction-shield-48.png'
                    onTriggered: {
                        drawer.hide()
-                       pageStack.pop(pageStack.initialItem, true);
+                       pageStack.pop(pageStack.get(0), StackView.Immediate);
                        pageStack.push( Qt.resolvedUrl('PageBlockStart.qml') )
                    }
                }
@@ -157,7 +158,7 @@ ApplicationWindow {
                    icon: '../images/time-12-48.png'
                    onTriggered: {
                        drawer.hide()
-                       pageStack.pop(pageStack.initialItem, true);
+                       pageStack.pop(pageStack.get(0), StackView.Immediate);
                        pageStack.push( Qt.resolvedUrl('PageCallLogStart.qml') )
                    }
                }
@@ -168,7 +169,7 @@ ApplicationWindow {
                    icon: '../images/add-48.png'
                    onTriggered: {
                        drawer.hide()
-                       pageStack.pop(pageStack.initialItem, true);
+                       pageStack.pop(pageStack.get(0), StackView.Immediate);
                        pageStack.push( Qt.resolvedUrl('PageServerBotList.qml') )
                    }
                }
@@ -179,7 +180,7 @@ ApplicationWindow {
                    icon: '../images/checked-checkbox-48.png'
                    onTriggered: {
                        drawer.hide()
-                       pageStack.pop(pageStack.initialItem, true);
+                       pageStack.pop(pageStack.get(0), StackView.Immediate);
                        pageStack.push( Qt.resolvedUrl('PageAppSettings.qml') )
                    }
                }
@@ -283,7 +284,7 @@ ApplicationWindow {
                 warningDialog.close();
                 drawer.hide();
 
-                pageStack.pop(pageStack.initialItem, true);
+                pageStack.pop(pageStack.get(0), StackView.Immediate);
                 pageStack.push( Qt.resolvedUrl('PageBlockStart.qml') )
                 return true;
         }

@@ -20,10 +20,15 @@ phonenumber::phonenumber(QString number, QString location, QString mnc) {
     }
 
 
-    if(number.startsWith(r->exit_code) || number.startsWith("+")) {
+    if(number.startsWith("+") || (r && number.startsWith(r->exit_code))) {
         qDebug() << "this is international number!";
 
         this->number_international = number;
+
+        if(!r) {
+            qDebug() << "no rule found";
+            return ;
+        }
 
         // remove exit code pre
         QString number_wo_xc = number.replace( QRegularExpression("^" + r->exit_code + "|^\\+"), "" );
@@ -46,6 +51,11 @@ phonenumber::phonenumber(QString number, QString location, QString mnc) {
     } else {
         qDebug() << "this is local number.";
         this->number_local = number;
+
+        if(!r) {
+            qDebug() << "no rule found";
+            return ;
+        }
 
         QString number_wo_trunk = number.replace( QRegularExpression("^" + r->trunk_code), "" );
         this->number_international = "+" + location_prefix + number_wo_trunk;
