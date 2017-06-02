@@ -27,7 +27,8 @@ public slots:
 
 signals:
     void finished();
-    void gotResult(QJsonArray resultJson);
+    void setBotParam(int botId, QString key, QString value);
+    void gotResult(QJsonArray resultJson, QList<int> botIds);
 
 };
 
@@ -48,11 +49,11 @@ private:
 
 public slots:
     void worker_finish();
-    void worker_result(QJsonArray resultJson);
+    void worker_result(QJsonArray resultJson, QList<int> botIds);
 
 signals:
     void start_worker(QMap<QString,QString> parameters, QList<int> botIds);
-    void gotResult(lookup_thread *sender, QJsonArray resultJson);
+    void gotResult(lookup_thread *sender, QJsonArray resultJson, QList<int> botIds);
 };
 
 #endif // LOOKUP_THREAD_H

@@ -41,7 +41,7 @@ public class Login extends Activity {
 //                    .setPositiveButton(android.R.string.ok, null).setCancelable(false).create().show();
 
             try {
-                MyService.postLogin(botId, loginData.getString("login_success_tag"), success_url, html );
+                MyService.postLogin(botId, loginData.getString("next_tag"), success_url, html );
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -59,7 +59,7 @@ public class Login extends Activity {
             super.onPageFinished(view, url);
 
             try {
-                if(url.startsWith(loginData.getString("login_success_url"))) {
+                if(url.startsWith(loginData.getString("done_url"))) {
                     android.webkit.CookieManager.getInstance().flush();
                     success_url = url;
                     view.loadUrl("javascript:window.Phonehook.result" +
@@ -108,7 +108,12 @@ public class Login extends Activity {
             webSettings.setJavaScriptEnabled(true);
 
             wv.setWebViewClient(new Callback());
-            wv.loadUrl(loginData.getString("url"));
+
+            if(loginData.has("html")) {
+                wv.loadDataWithBaseURL("http://www.google.com/", loginData.getString("html"), "text/html", null, null);
+            } else {
+                wv.loadUrl(loginData.getString("url"));
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

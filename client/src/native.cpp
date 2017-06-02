@@ -48,7 +48,7 @@ static void jvPostLogin(JNIEnv *env, jobject thiz, jint botId, jstring success_t
     QString loginUrl = env->GetStringUTFChars(url, NULL);
     QString loginHtml = env->GetStringUTFChars(html, NULL);
 
-    QMetaObject::invokeMethod( Native::Instance(), "postLogin", Qt::QueuedConnection,
+    QMetaObject::invokeMethod( Native::Instance(), "login", Qt::QueuedConnection,
                                Q_ARG(int, botId),
                                Q_ARG(QString, successTag),
                                Q_ARG(QString, loginUrl),
@@ -370,23 +370,21 @@ void Native::onIncomingCall(QString number) {
 
     m_lastLookupResult = QJsonArray();
 
-    connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray)), this, SLOT(lookupResult(lookup_thread*,QJsonArray)));
-    connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray)), this, SLOT(lookupResult2(lookup_thread*,QJsonArray)));
+    connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray,QList<int>)), this, SLOT(lookupResult(lookup_thread*,QJsonArray,QList<int>)) );
+    connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray,QList<int>)), this, SLOT(lookupResult2(lookup_thread*,QJsonArray,QList<int>)) );
 
     QList<int> bots;
     lt->start(pn, bots);
 }
 
-void Native::lookupResult(lookup_thread *sender, QJsonArray result) {
-    Q_UNUSED(result)
+void Native::lookupResult(lookup_thread *sender, QJsonArray, QList<int>) {
     if(blocking::Instance()->checkAutoBlock(m_lastNumber)) {
         qDebug() << "disconnecting signal" << sender;
         disconnect(sender, SIGNAL(gotResult(lookup_thread*, QJsonArray)), this, SLOT(lookupResult(lookup_thread*, QJsonArray)));
     }
 }
 
-void Native::lookupResult2(lookup_thread *sender, QJsonArray result) {
-    Q_UNUSED(sender)
+void Native::lookupResult2(lookup_thread*, QJsonArray result, QList<int>) {
     foreach(auto r, result) {
         m_lastLookupResult.append(r);
     }
@@ -481,7 +479,7 @@ QJsonArray Native::getContacts() {
 
 }
 
-void Native::postLogin(int bot_id, QString success_tag, QString login_url, QString login_html) {
+void Native::login(int bot_id, QString success_tag, QString login_url, QString login_html) {
 
     // open cookiez db
     // /home/nemo/.local/share/phonehook/phonehook/.QtWebKit/cookies.db
@@ -491,7 +489,7 @@ void Native::postLogin(int bot_id, QString success_tag, QString login_url, QStri
     // table|cookies|cookies|2|CREATE TABLE cookies (cookieId VARCHAR PRIMARY KEY, cookie BLOB)
     // index|sqlite_autoindex_cookies_1|cookies|3|
 
-    qDebug() << "copy cookies";
+    qDebug() << "copy cookies" << success_tag;
 
     QString cookies_db_path = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation).at(0) + "/../app_webview/Cookies";
 
@@ -548,7 +546,7 @@ void Native::postLogin(int bot_id, QString success_tag, QString login_url, QStri
         clearOldCookie.exec();
 
         QSqlQuery checkExistingCookie(R"(
-            INSERT INTO bot_cookie_cache(bot_id,key,value,domain,path,expire)
+            REPLACE INTO bot_cookie_cache(bot_id,key,value,domain,path,expire)
             VALUES(?,?,?,?,?,?);
         )");
 
@@ -585,15 +583,15 @@ void Native::postLogin(int bot_id, QString success_tag, QString login_url, QStri
 
         QMap<QString,QString> params;
         params["tagWanted"] = success_tag;
-        params["login_http"] = login_html;
-        params["login_url"] = login_url;
+        params["html"] = login_html;
+        params["url"] = login_url;
 
-        qDebug() << "login_http" << login_html;
-        qDebug() << "login_url" << login_url;
+        qDebug() << "html" << login_html;
+        qDebug() << "url" << login_url;
 
         lt->start(params, bots);
 
-        connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray)), this, SLOT(loginSuccessBotResult(lookup_thread*,QJsonArray)));
+        connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray,QList<int>)), this, SLOT(loginSuccessBotResult(lookup_thread*,QJsonArray,QList<int>)) );
 
     } else {
         emit loginResult(true, 0);
@@ -601,8 +599,34 @@ void Native::postLogin(int bot_id, QString success_tag, QString login_url, QStri
 
 }
 
-void Native::loginSuccessBotResult(lookup_thread*, QJsonArray) {
-    emit loginResult(true, 0);
+void Native::loginSuccessBotResult(lookup_thread*, QJsonArray result, QList<int> botIds) {
+
+    if(result.count() == 0) {
+        emit loginResult(false, -2);
+    } else {
+        auto loginObj = result.at(0).toObject();
+
+        if(loginObj.contains("success")) {
+            emit loginResult(true, 0);
+        } else if(loginObj.contains("html") || loginObj.contains("url")) {
+
+#ifdef ANDROID
+        QAndroidJniObject::callStaticMethod<void>("com/omnight/phonehook/Native",
+                    "startLogin", "(ILjava/lang/String;)V",
+                    (jint)botIds[0],
+                    QAndroidJniObject::fromString( QJsonDocument( loginObj ).toJson() ).object<jstring>()
+        );
+#endif
+
+
+        } else {
+            emit loginResult(false, -3);
+        }
+    }
+
+
+
+
 }
 
 void Native::launchMaps(QString address) {

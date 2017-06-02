@@ -75,7 +75,7 @@ public:
 
     Q_INVOKABLE QString getCountry();
 
-    Q_INVOKABLE void postLogin(int bot_id, QString success_tag, QString login_url, QString login_html);
+    Q_INVOKABLE void login(int bot_id, QString success_tag, QString login_url = "", QString login_html = "");
 
     Q_INVOKABLE bool testNumber(int botId, QString number);
     Q_INVOKABLE QString getContactFromNumber(QString number);
@@ -105,9 +105,9 @@ signals:
     void loginCancel();
 
 private slots:
-    void lookupResult(lookup_thread *sender, QJsonArray result);
-    void lookupResult2(lookup_thread *sender, QJsonArray result);
-    void loginSuccessBotResult(lookup_thread* thread,QJsonArray data);
+    void lookupResult(lookup_thread *sender, QJsonArray result, QList<int> botIds);
+    void lookupResult2(lookup_thread *sender, QJsonArray result, QList<int> botIds);
+    void loginSuccessBotResult(lookup_thread* thread,QJsonArray data, QList<int> botIds);
     //void updateAndroidNotification();
 
 private:

@@ -114,10 +114,13 @@ void robot_base::processNode(QStack<process_data*> inputDataTree, const QDomElem
         if(robotNode.hasAttribute("name") && !robotNode.attribute("name").startsWith("#")) {
 
             QString param = robotNode.attribute("paramoutput");
+            QString attr = robotNode.attribute("attributeoutput");
 
             if(param != "") {
                 if(p)
                     parameters.insert(robotNode.attribute("name"), p->value);
+            } else if(attr != "") {
+                outputNode.setAttribute(robotNode.attribute("name"), p->value);
             } else {
                 QDomElement n = outputNode.ownerDocument().createElement( robotNode.attribute("name") );
                 outputNode.appendChild(n);

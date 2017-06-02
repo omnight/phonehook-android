@@ -144,7 +144,7 @@ public slots:
     void network_response(QNetworkReply*);
     void service_registered(QString);
     void service_unregistered(QString);
-    void gotSearchResults(lookup_thread* thread, QJsonArray data);
+    void gotSearchResults(lookup_thread* thread, QJsonArray data, QList<int> botIds);
     void gotSearchFinished();
 
 private:

@@ -23,7 +23,7 @@ public class MyService extends QtService {
 
     private static final String TAG = "Phonehook";
 
-    private static native void incomingCall(String nr);
+    public static native void incomingCall(String nr);
     private static native void testNumber(int botId, String nr);
     private static native void setNetwork(int mcc, int mnc);
 
@@ -127,7 +127,7 @@ public class MyService extends QtService {
         }
 
         PhoneStateListener phoneStateListener = new PhoneStateListener() {
-            @Override
+            /*@Override
             public void onCallStateChanged(int state, String number) {
                 String currentPhoneState = null;
                 Log.d(TAG, "PhoneState " + number + " __ " + state);
@@ -145,7 +145,7 @@ public class MyService extends QtService {
                 }
                 //Toast.makeText(self, currentPhoneState, Toast.LENGTH_LONG).show();
 
-            }
+            }*/
 
             @Override
             public void onServiceStateChanged(ServiceState serviceState) {
@@ -168,7 +168,15 @@ public class MyService extends QtService {
         m_hasInitialized = true;
 
         if(startIntent != null) {
-            gotClearIntent(startIntent.getIntExtra("id", -1));
+
+            if (startIntent.getBooleanExtra("clear", false) == true && startIntent.hasExtra("id")) {
+                gotClearIntent(startIntent.getIntExtra("id", -1));
+            }
+
+            if(startIntent.hasExtra("incomingNumber")) {
+                incomingCall(startIntent.getStringExtra("incomingNumber"));
+            }
+
             startIntent = null;
         }
     }
@@ -191,13 +199,22 @@ public class MyService extends QtService {
       }
 
       // when user clears notification
-      if(intent != null && intent.getBooleanExtra("clear", false) == true && intent.hasExtra("id")) {
-          if(Native.isNativeReady) {
-              gotClearIntent(intent.getIntExtra("id", -1));
-          } else {
-              startIntent = intent;
-          }
-      }
+
+        if(intent != null) {
+            if (Native.isNativeReady) {
+                if (intent.getBooleanExtra("clear", false) == true && intent.hasExtra("id")) {
+                    gotClearIntent(intent.getIntExtra("id", -1));
+                }
+                if(intent.hasExtra("incomingNumber")) {
+                    incomingCall(intent.getStringExtra("incomingNumber"));
+                }
+            } else {
+                startIntent = intent;
+            }
+        }
+
+
+
 
       return START_STICKY;
    }

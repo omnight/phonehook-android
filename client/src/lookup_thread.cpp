@@ -18,14 +18,14 @@ void lookup_thread::start(QMap<QString,QString> parameters, QList<int> botIds) {
     //connect(&thread, SIGNAL(started()), this, SLOT(threadStarted()));
     connect(this, SIGNAL(start_worker(QMap<QString,QString>,QList<int>)), &w, SLOT(threadStarted(QMap<QString,QString>,QList<int>)) );
     connect(&w, SIGNAL(finished()), this, SLOT(worker_finish()));
-    connect(&w, SIGNAL(gotResult(QJsonArray)), this, SLOT(worker_result(QJsonArray)));
+    connect(&w, SIGNAL(gotResult(QJsonArray,QList<int>)), this, SLOT(worker_result(QJsonArray,QList<int>)));
     thread.start();
     w.moveToThread(&thread);
     emit start_worker(parameters,botIds);
 }
 
-void lookup_thread::worker_result(QJsonArray resultJson) {
-    emit gotResult(this, resultJson);
+void lookup_thread::worker_result(QJsonArray resultJson, QList<int> botIds) {
+    emit gotResult(this, resultJson, botIds);
 }
 
 void lookup_thread::worker_finish() {
@@ -231,11 +231,11 @@ void lookup_worker::threadStarted(QMap<QString,QString> parameters, QList<int> b
                         displayData[ e.tagName() + "_array" ]  = a;
 
                     } else {
-                        if(e.tagName() == "number")
+                        if(e.tagName() == "number") {
                             displayData[e.tagName()] = phonenumber::convertNumber( e.text(),
                                                                           sq.value("country").toString(),
                                                                           phonenumber::mobilecc_to_iso32662( Native::Instance()->getMcc() ) );
-                        else
+                        } else
                             displayData[ e.tagName() ] = e.text();
                     }
                 }
@@ -273,7 +273,7 @@ void lookup_worker::threadStarted(QMap<QString,QString> parameters, QList<int> b
                                       Q_ARG(QString, "searchResult"), Q_ARG(QString, displayDataDoc.toJson()));
         }*/
 
-        emit gotResult(displayArray);
+        emit gotResult(displayArray, botIds);
 
     }
 

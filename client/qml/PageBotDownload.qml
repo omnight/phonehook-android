@@ -157,6 +157,7 @@ PageBase {
         model: botData.tags
 
         function m() {
+            qsTr("login")
             qsTr("login_google")
             qsTr("login_ms")
             qsTr("login_facebook")

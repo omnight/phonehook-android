@@ -258,7 +258,13 @@ void handler_url::loadUrl(const QDomElement &robotXml, process_data *inputData, 
 
     }
 
-    qDebug() << pd->value.length() << "bytes" << pd->value.left(200);
+    qDebug() << pd->value.length() << "bytes";
+
+    for(int i=0; i < pd->value.length(); i+= 500) {
+        qDebug() << pd->value.mid(i, 500);
+        break;
+    }
+
 
     pd->node_id = robotXml.attribute("id", "");
 

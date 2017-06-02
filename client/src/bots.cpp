@@ -1,17 +1,18 @@
-#include "bots.h"
 #include <QDir>
 #include <QDomDocument>
 #include <QXmlQuery>
 #include <QSqlField>
 #include <QXmlResultItems>
-#include "lookup_thread.h"
-#include "setting.h"
 #include <QProcess>
-#include "countries.h"
 #include <QSqlError>
-#include "db.h"
 #include <QJsonArray>
 #include <QJsonObject>
+
+#include "bots.h"
+#include "lookup_thread.h"
+#include "setting.h"
+#include "countries.h"
+#include "db.h"
 
 bots::bots(QObject *parent) :
     QObject(parent)
@@ -642,7 +643,7 @@ void bots::search(QJsonObject inParams, bool clear, int botId) {
 
     lookup_thread *lt = new lookup_thread();
 
-    connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray)), this, SLOT(gotSearchResults(lookup_thread*,QJsonArray)) );
+    connect(lt, SIGNAL(gotResult(lookup_thread*,QJsonArray,QList<int>)), this, SLOT(gotSearchResults(lookup_thread*,QJsonArray,QList<int>)) );
 
     connect(lt, SIGNAL(destroyed(QObject*)), this, SLOT(gotSearchFinished()));
 
@@ -658,7 +659,7 @@ void bots::search(QJsonObject inParams, bool clear, int botId) {
 
 }
 
-void bots::gotSearchResults(lookup_thread *thread, QJsonArray data) {
+void bots::gotSearchResults(lookup_thread *thread, QJsonArray data, QList<int>) {
     Q_UNUSED(thread)
 
     m_searchResultNext = QJsonValue();

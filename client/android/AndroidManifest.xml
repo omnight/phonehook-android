@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<manifest package="com.omnight.phonehook" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0.3" android:versionCode="4" android:installLocation="auto">
+<manifest package="com.omnight.phonehook" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0.7" android:versionCode="8" android:installLocation="auto">
     <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Phonehook" android:icon="@mipmap/ic_launcher">
         <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="com.omnight.phonehook.Native" android:label="-- %%INSERT_APP_NAME%% --" android:screenOrientation="unspecified" android:launchMode="singleTop" android:process="com.omnight.phonehook">
             <intent-filter>
@@ -81,7 +81,9 @@
 
         <receiver android:name=".ServiceStarter" android:enabled="true" android:exported="false">
             <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
 

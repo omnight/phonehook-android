@@ -100,8 +100,10 @@ PageBase {
                      return value;
                });
 
-                 console.log(login_data);               
-                 _native.startLogin(botId, login_data)
+                 console.log(login_data);
+                 //_native.startLogin(botId, login_data)
+                 // login(int bot_id, QString success_tag, QString login_url, QString login_html)
+                 _native.login(botId, model.login_success_tag);
                  pageRoot.enabled = false
 
              }
